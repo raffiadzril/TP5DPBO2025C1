@@ -83,4 +83,6 @@ private boolean isFormValid() {
 ## Dokumentasi
 [recordDB](Screenshots/Record_Dokumentasi-Database_on_Swing.mp4)
 
+https://github.com/user-attachments/assets/77560cac-e5e2-40ca-b05e-ccf9132ddb89
+
 
