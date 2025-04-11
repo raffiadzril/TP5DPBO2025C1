@@ -1,88 +1,179 @@
-# Tugas Praktikum 4 DPBO 2025 C1
-Raffi Adzril Alfaiz - Ilmu Komputer UPI
+# Tugas Praktikum 6 DPBO 2025 C1  
+**Raffi Adzril Alfaiz - Ilmu Komputer UPI**
+
 ---
 
-## Janji
-Saya, Raffi Adzril Alfaiz dengan NIM 2308355, mengerjakan Tugas Praktikum 5 dalam mata kuliah Desain dan Pemrograman Berorientasi Objek untuk keberkahan-Nya. Maka saya tidak melakukan kecurangan seperti yang telah dispesifikasikan. Aamiin.
----
-# Aplikasi Data Mahasiswa - Java Swing
+## Janji  
+Saya, Raffi Adzril Alfaiz dengan NIM 2308355, mengerjakan Tugas Praktikum 6 dalam mata kuliah Desain dan Pemrograman Berorientasi Objek untuk keberkahan-Nya. Maka saya tidak melakukan kecurangan seperti yang telah dispesifikasikan. Aamiin.
 
-## Deskripsi
-Aplikasi ini dibuat menggunakan Java Swing untuk mengelola data mahasiswa berupa **NIM**, **Nama**, **Jenis Kelamin**, dan **Kelas**. Fitur utama mencakup **tambah**, **ubah**, dan **hapus** data yang ditampilkan dalam tabel GUI.
+---
+
+## Deskripsi Tugas
+
+Ini adalah game **Flappy Bird** sederhana yang dibuat menggunakan Java `Swing` dan `AWT`. Game ini memiliki sprite khusus, efek suara, dan tampilan skor bergaya retro.
 
 ## Desain Program
-- **Class `Mahasiswa`**  
-  Menyimpan data mahasiswa dengan atribut: `nim`, `nama`, `jenisKelamin`, dan `kelas`.
 
-- **Class `Menu` (extends JFrame)**  
-  Komponen utama GUI, mengelola tampilan form input dan tabel, serta menangani logika tambah/edit/hapus.
-- **Class `Database`**  
-  Mengelola koneksi dan query ke database db_mahasiswa.
-![Class Diagram](Screenshots/class_diagram_swingdb.jpg)
+```mermaid
+classDiagram
+    class FlappyBird {
+        - int frameWidth
+        - int frameHeight
+        - Image backgroundImage
+        - Image birdImage
+        - Image lowerPipeImage
+        - Image upperPipeImage
+        - int playerStartPosX
+        - int playerStartPosY
+        - int playerWidth
+        - int playerHeight
+        - Player player
+        - ArrayList~Pipe~ pipes
+        - int pipeStartPosX
+        - int pipeWidth
+        - int pipeHeight
+        - Timer gameLoop
+        - Timer pipesCooldown
+        - int gravity
+        - boolean gameOver
+        - JLabel scoreLabel
+        - int score
+        - boolean passedPipe
+        - Clip backgroundClip
+        + FlappyBird()
+        + void draw(Graphics g)
+        + void move()
+        + void placePipes()
+        + void playBackgroundMusic()
+        + void stopBackgroundMusic()
+        + void actionPerformed(ActionEvent e)
+        + void paintComponent(Graphics g)
+        + void keyPressed(KeyEvent e)
+        + void keyTyped(KeyEvent e)
+        + void keyReleased(KeyEvent e)
+        + void restartGame()
+    }
+
+    class Player {
+        - int posX
+        - int posY
+        - int width
+        - int height
+        - Image image
+        - int velocityY
+        + Player(int, int, int, int, Image)
+        + void setPosX(int)
+        + void setPosY(int)
+        + void setWidth(int)
+        + void setHeight(int)
+        + void setImage(Image)
+        + void setVelocityY(int)
+        + int getPosX()
+        + int getPosY()
+        + int getWidth()
+        + int getHeight()
+        + Image getImage()
+        + int getVelocityY()
+    }
+
+    class Pipe {
+        - int posX
+        - int posY
+        - int width
+        - int height
+        - Image image
+        - int velocityX
+        - boolean hasScored
+        + Pipe(int, int, int, int, Image)
+        + int getPosX()
+        + void setPosX(int)
+        + int getPosY()
+        + int getWidth()
+        + int getHeight()
+        + Image getImage()
+        + int getVelocityX()
+        + boolean isHasScored()
+        + void setHasScored(boolean)
+    }
+
+    FlappyBird --> Player : uses
+    FlappyBird --> Pipe : uses
+
+```
+
 
 ## Alur Program
-1. **Program dimulai dari `main()`**: Membuat dan menampilkan GUI.
-2. **Form input diisi** → Klik **Add** untuk menyimpan data ke list dan tabel.
-3. Klik data di tabel → Form terisi otomatis → Tombol berubah jadi **Update/Delete**.
-4. **Update** untuk mengubah data terpilih.
-5. **Delete** untuk menghapus data dari list dan tabel.
-6. **Cancel** untuk reset form.
-7. **Terdapat konfigurasi database** untuk menyimpan data mahasiswa.
 
-## Tambahan dari Tugas 4
-1. **CRUD Database** : membuat agar program dapat berhubungan dengan database db_mahasiswa, sehingga data tidak akan tereset seperti sebelumnya
-2. **Prompt untuk insert NIM yang sudah ada** Program memastikan agar NIM yang sudah ada ketika diinsert ulang memunculkan warning NIM sudah ada dan return program
-```java
-private boolean isNimExists(String nim) {
-   try {
-      ResultSet resultSet = database.selectQuery("SELECT nim FROM mahasiswa WHERE nim = '" + nim + "'");
-      return resultSet.next();
-   } catch (SQLException e) {
-      throw new RuntimeException(e);
-   }
-}
-```
-3. **Prompt untuk Data yang masih kosong** Program memastikan agar data yang masih kosong ketika diinsert memunculkan warning data masih kosong seperti NIM, Nama, kelas, Jenis kelamin setelehanya akan return program
-```java
-private boolean isFormValid() {
-   List<String> kosong = new ArrayList<>();
-   if (nimField.getText().isEmpty()){
-   kosong.add("NIM");
-   }
-   if(namaField.getText().isEmpty()){
-   kosong.add("Nama");
-   }
-   if(jenisKelaminComboBox.getSelectedIndex() == -1){
-   kosong.add("Jenis Kelamin");
-   }
+1. **Inisialisasi Game**
+   - Program dimulai dengan membuat instance dari `FlappyBird`.
+   - Properti penting seperti ukuran layar, posisi player, dan resource (gambar, musik) dimuat.
+   - Objek `Player` dan `ArrayList<Pipe>` diinisialisasi.
 
-        boolean kelasSelected = false;
-        for (JRadioButton rb : kelasRadioButton) {
-            if (rb.isSelected()) {
-                kelasSelected = true;
-            }
-        }
-        if (!kelasSelected) {
-            kosong.add("Kelas");
-        }
-        if (!kosong.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(null, "Input " + String.join(", ", kosong) + " tidak boleh kosong", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        return true;
-   }
-```
+2. **Menampilkan UI**
+   - Game window dibuat menggunakan `JFrame` dan ditambahkan panel dari `FlappyBird`.
+   - Label skor ditambahkan ke panel.
 
-## Fungsi Utama
-- `insertData()` → Tambah data baru ke list dan refresh tabel.
-- `updateData()` → Edit data mahasiswa berdasarkan baris terpilih.
-- `deleteData()` → Hapus data dari list dan tabel.
-- `clearForm()` → Kosongkan form input.
-- `setTable()` → Menyusun dan menampilkan isi tabel berdasarkan list.
+3. **Memulai Musik dan Timer**
+   - Musik latar dimulai menggunakan `Clip` dari Java Sound API.
+   - Dua timer diaktifkan:
+     - `gameLoop` (20ms interval) → untuk menggambar ulang layar dan menggerakkan objek.
+     - `pipesCooldown` (1500ms interval) → untuk menambahkan pipa baru ke dalam game.
+
+4. **Loop Permainan**
+   - Pada setiap tick `gameLoop`:
+     - `move()` dipanggil untuk:
+       - Menggerakkan player berdasarkan gravitasi.
+       - Menggerakkan semua pipa ke kiri.
+       - Mendeteksi tabrakan dengan pipa atau keluar layar.
+       - Mengatur skor saat player berhasil melewati pipa.
+     - `repaint()` memanggil `paintComponent()` untuk menggambar ulang objek di layar.
+
+5. **Kontrol Pemain**
+   - Menekan tombol spasi (`KeyEvent`) mengurangi kecepatan jatuh (melompat ke atas).
+   - Jika `gameOver` bernilai `true`, maka tombol spasi akan memanggil `restartGame()`.
+
+6. **Game Over**
+   - Jika player bertabrakan dengan pipa atau menyentuh batas layar:
+     - Timer berhenti.
+     - Musik dihentikan.
+     - `gameOver` di-set menjadi `true`.
+
+7. **Restart Game**
+   - Semua pipa dihapus.
+   - Player di-reset ke posisi awal.
+   - Skor dan kondisi game di-reset.
+   - Musik dan timer diaktifkan kembali.
+
+---
+
+## Interaksi Antar Kelas
+
+- `FlappyBird` mengatur seluruh alur program dan menggunakan:
+  - `Player`: untuk menyimpan dan mengatur posisi serta gerakan burung.
+  - `Pipe`: untuk menyimpan data setiap pipa (posisi, ukuran, gambar).
+
+- Perubahan posisi dan kondisi semua entitas dilakukan melalui metode getter/setter di masing-masing class.
+
+---
+
+## Fitur
+
+- Gameplay klasik Flappy Bird
+- Grafik khusus (burung, latar belakang, pipa, dan papan game over)
+- Pelacakan skor dengan font bergaya arcade
+- Mulai ulang permainan dengan menekan `R` setelah game over
+
+
+## Kontrol
+
+| Tombol     | Aksi                   |
+|------------|------------------------|
+| `SPACE`    | Membuat burung melompat dan start game |
+| `R`        | Memulai ulang game setelah game over |
+
+
 
 ## Dokumentasi
-[recordDB](Screenshots/Record_Dokumentasi-Database_on_Swing.mp4)
+[recordGame](RecordingGame.mp4)
 
-https://github.com/user-attachments/assets/77560cac-e5e2-40ca-b05e-ccf9132ddb89
-
-
+[https://github.com/raffiadzril/TP6DPBO2025C1/issues/1#issue-2988869156](https://github.com/user-attachments/assets/350faecd-8e5a-4809-99f9-c124d7b672b1)
