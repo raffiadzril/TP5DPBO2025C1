@@ -176,4 +176,4 @@ classDiagram
 ## Dokumentasi
 [recordGame](RecordingGame.mp4)
 
-[https://github.com/raffiadzril/TP6DPBO2025C1/issues/1#issue-2988869156](https://github.com/user-attachments/assets/350faecd-8e5a-4809-99f9-c124d7b672b1)
+https://github.com/user-attachments/assets/b9b0b2d3-95de-4d8e-a461-ee717a5d70ad
